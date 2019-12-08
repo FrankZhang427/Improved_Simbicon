@@ -114,7 +114,7 @@ public class Ground {
         Gx[14] = 1000;
         Gy[14] = 0.4f;
         for (int i = 0; i < npts; i++) {
-        		Gy[i] *= 1.2f;
+        		Gy[i] *= 1.8f;
         }
     
     }

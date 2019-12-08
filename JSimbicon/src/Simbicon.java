@@ -250,8 +250,9 @@ public class Simbicon extends java.applet.Applet
         float stanceFootY = bip7.getStanceFootYPos(con);
         Mdd = bip7.State[1] - DesVel;          // center-of-mass velocity error
         Md = bip7.State[0] - stanceFootX;      // center-of-mass position error
-        Mgnd = gnd.gndHeight(stanceFootX + 0.55f) - gnd.gndHeight(stanceFootX);
+        Mgnd = gnd.gndHeight(stanceFootX + 0.55f * bip7.State[1]) - gnd.gndHeight(stanceFootX);
         if (Mgnd <= 0) Mgnd = 0f;
+        if (Mgnd >0.14f) Mgnd *=1.5f;
         // System.out.println(con.fsmState % 4);
         
     }        
