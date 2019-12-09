@@ -1,0 +1,66 @@
+Walking
+Flat terrain
+SPD
+Sum of squared torques : 19211.824
+Sum of squared acceleration : 933125.6
+PD
+Sum of squared torques : 19257.502
+Sum of squared acceleration : 994656.56
+Downward
+SPD
+Sum of squared torques : 28891.479
+Sum of squared acceleration : 2499578.8
+PD
+Sum of squared torques : 28956.936
+Sum of squared acceleration : 2724502.5
+
+Running 
+Flat terrain
+SPD
+Sum of squared torques : 36158.094
+Sum of squared acceleration : 1910214.4
+PD
+Sum of squared torques : 36257.85
+Sum of squared acceleration : 2019986.5
+Downward
+SPD
+Sum of squared torques : 38877.63
+Sum of squared acceleration : 1954188.0
+PD
+Sum of squared torques : 38981.566
+Sum of squared acceleration : 2069604.6
+
+Crounch
+Flat terrain
+SPD
+Sum of squared torques : 65352.285
+Sum of squared acceleration : 1.0424819E7
+PD
+Sum of squared torques : 65434.848
+Sum of squared acceleration : 1.1157453E7
+Downward
+SPD
+Sum of squared torques : 74499.78
+Sum of squared acceleration : 7612047.0
+PD
+Sum of squared torques : 74638.5
+Sum of squared acceleration : 8264317.5
+
+
+Generalized
+Flat terrain
+SPD
+Sum of squared torques : 58346.44
+Sum of squared acceleration : 1541457.0
+PD
+Sum of squared torques : 58535.17
+Sum of squared acceleration : 1622621.4
+
+Ground Height
+Flat terrain
+SPD
+Sum of squared torques : 19211.824
+Sum of squared acceleration : 933125.6
+PD
+Sum of squared torques : 19257.502
+Sum of squared acceleration : 994656.56

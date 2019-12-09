@@ -33,6 +33,9 @@ public class Simbicon extends java.applet.Applet
     private float DtDisp = 0.0054f;
     private float timeEllapsed = 0;
     
+    // use SPD?
+    boolean spd = true;
+    
     Bip7 pcaBip7 = new Bip7();
     Ground pcaGnd = new Ground();
     
@@ -54,6 +57,12 @@ public class Simbicon extends java.applet.Applet
     int dim = 7; // 7 for each joint angle
     Matrix data = new Matrix(nrSample, dim);
     
+    //some variables for compare PD and SPD
+    int nrFrame = 100000;
+    int curFrame = 0;
+    float sumSqTorq = 0f;
+    float sumSqAcc = 0f;
+    
     
     //and the controller
     Controller con;
@@ -69,6 +78,9 @@ public class Simbicon extends java.applet.Applet
 
     //if this variable is set to true, the simulation will be recorded
     boolean recFlag = false;
+    
+    //if this variable is set to true, the simulation will be also compute averaged joint torq/acc
+    boolean spdFlag = false;
     
     private javax.swing.JButton pcaButton;
     private javax.swing.JButton recButton;
@@ -110,7 +122,7 @@ public class Simbicon extends java.applet.Applet
         con.addRunningController();
         con.addCrouchWalkController();
         con.addHighStepController();
-        con.addFrankWalkingController();
+        con.addGeneralWalkingController();
         con.addRobustWalkingController();
         
         this.addKeyListener(this);
@@ -143,8 +155,10 @@ public class Simbicon extends java.applet.Applet
             joint_vel  += bip7.State[5];    // add body angular velocity
             joint_ac	   += bip7.ac[2];		// add body angular acceleration
         }
-        //torq[joint] = kp*(dposn - joint_posn) - kd*joint_vel;
-        torq[joint] = kp*(dposn - joint_posn - Dt * joint_vel) - kd*(joint_vel + Dt * joint_ac );
+        if (spd)
+        		torq[joint] = kp*(dposn - joint_posn - Dt * joint_vel) - kd*(joint_vel + Dt * joint_ac );
+        else
+        		torq[joint] = kp*(dposn - joint_posn) - kd*joint_vel;
     }
 
     //////////////////////////////////////////////////////////
@@ -156,10 +170,15 @@ public class Simbicon extends java.applet.Applet
             float kdL = 80;
             float minAngle = con.jointLimit[0][joint];
             float maxAngle = con.jointLimit[1][joint];
-//            float currAngle  = bip7.State[4 + joint*2];
-//            float currOmega = bip7.State[4 + joint*2 + 1] ;
-            float currAngle  = bip7.State[4 + joint*2] + Dt * bip7.State[4 + joint*2 + 1];
-            float currOmega = bip7.State[4 + joint*2 + 1] + Dt * bip7.ac[2 + joint];
+            float currAngle, currOmega;
+            if (spd) {
+            		currAngle  = bip7.State[4 + joint*2] + Dt * bip7.State[4 + joint*2 + 1];
+                currOmega = bip7.State[4 + joint*2 + 1] + Dt * bip7.ac[2 + joint];
+            }
+            else {
+            		currAngle  = bip7.State[4 + joint*2];
+  				currOmega = bip7.State[4 + joint*2 + 1] ;
+            }
 
             if (currAngle<minAngle)
                     torq = kpL*(minAngle - currAngle) - kdL*currOmega;
@@ -200,7 +219,7 @@ public class Simbicon extends java.applet.Applet
                     target = boundRange(target, con.targetLimit[0][n], con.targetLimit[1][n]);    // limit range of target angle
                     wPDtorq(torq, n, target, con.kp[n], con.kd[n], worldFrame[n]);  // compute torques
             }
-
+            
             con.advance(bip7);   	// advance FSM to next state if needed
     }
 
@@ -338,15 +357,15 @@ public class Simbicon extends java.applet.Applet
     }
     
     public void resetSimulation(){
-                //toggle the sim flag
-                bip7.resetBiped();
+        //toggle the sim flag
+        bip7.resetBiped();
 
         	con.stateTime = 0;
         	con.fsmState = 0;
-                con.currentGroupNumber = 0;
-                con.desiredGroupNumber = 0;
-                
-                repaint();        
+        con.currentGroupNumber = 0;
+        con.desiredGroupNumber = 0;
+        
+        repaint();        
     }
     
     public void runLoop(){
@@ -358,6 +377,25 @@ public class Simbicon extends java.applet.Applet
             bip7.computeGroundForces(gnd);
             bip7Control(bip7.t);
             bip7.runSimulationStep(Dt);
+            
+            if (spdFlag) {
+	            if(curFrame <nrFrame) {
+		        		for (int j = 0; j < dim; j++) {
+		        			sumSqTorq += bip7.t[j] * bip7.t[j];
+		        			sumSqAcc += bip7.ac[j] * bip7.ac[j];
+		        		}
+		        		sumSqAcc += bip7.ac[7] * bip7.ac[7] + bip7.ac[8] * bip7.ac[8];
+		        		curFrame++;
+		    		}
+		    		else {
+		    			sumSqTorq /= nrFrame;
+		    			sumSqAcc /= nrFrame;
+		    			System.out.println("Averaged squared torques : " + sumSqTorq);
+		    			System.out.println("Averaged squared accelerations : " + sumSqAcc);
+		    			
+		    			spdFlag = !spdFlag;
+		    		}
+            }
             
             timeEllapsed += Dt;
             if (timeEllapsed>DtDisp){
@@ -390,9 +428,11 @@ public class Simbicon extends java.applet.Applet
         bip7.drawBiped(g2, m);
         gnd.draw(g2,m);
         g.drawImage(tempBuffer, 0, panel.getHeight(), this);
+        
+        // compute PCA
         if(pcaFlag) {
         		if(curSample <nrSample) {
-	        		for (int i = 0; i < 7; i++)
+	        		for (int i = 0; i < dim; i++)
 	        			data.set(curSample, i, bip7.State[4+i*2]);
 	        		curSample++;
         		}
@@ -403,6 +443,7 @@ public class Simbicon extends java.applet.Applet
         			pcaButton.setText("DONE PCA!");
         		}
         }
+        
         if(recFlag) {
 	        File file = new File( "stills/image" + format.format(imgCnt) + ".png" );                                             
 	        imgCnt++;

@@ -487,8 +487,8 @@ public class Controller {
         nrGroups++;
     }
     
-    /** manually add a "Frank" walking controller to the states...*/
-    void addFrankWalkingController(){
+    /** manually add a generalized walking controller to the states...*/
+    void addGeneralWalkingController(){
         /* - State 0 - */
         state[nrStates] = new ConState();
         state[nrStates].num = nrStates;
