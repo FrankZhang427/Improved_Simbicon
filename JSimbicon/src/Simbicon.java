@@ -528,6 +528,41 @@ public class Simbicon extends java.applet.Applet
 	        }
     		}
     		
+    		// draw PCA for average pose
+    		float[] state = {0.463f, 0.98f, 0.898f, -0.229f, 0.051f, 0.276f, -0.221f, -1.430f, -0.217f, 0.086f, 0.298f, -3.268f, -0.601f, 3.167f, 0.360f, 0.697f, 0.241f, 3.532f};
+		for (int j = 0; j < dim; j++) {
+			state[4 + j * 2] = pca.mean[j];
+		}
+    		pcaBip7.setState(state);
+    		Graphics g2 = pcaBuffer.createGraphics();
+    		g2.setColor(new Color(255, 255, 255));
+    		g2.fillRect(0, 0, getSize().width - 1, getSize().height - 1);
+        Matrix3x3 m = Matrix3x3.getTranslationMatrix(0,-300);
+        m = m.multiplyBy(Matrix3x3.getScalingMatrix((float)100));
+        
+        
+        float panX = pcaBip7.State[0];
+        float panY = pcaBip7.State[2];
+        if (shouldPanY == false)
+            panY = 0;
+        m = m.multiplyBy(Matrix3x3.getTranslationMatrix(-panX+1.5f,-panY+0.5f));
+        
+        
+        pcaBip7.drawBiped(g2, m);
+        // pcaGnd.draw(g2,m);
+        File file = new File( "pca/image_mean.png" );                                             
+        file = new File(file.getAbsolutePath().trim()); 
+        try {
+            if ( ! ImageIO.write( pcaBuffer, "png", file) ) {
+                System.err.println("Error writing file using ImageIO (unsupported file format?)");
+                return;
+            }
+        } catch (IOException e) {    
+            System.err.println("trouble writing " + file );
+            e.printStackTrace();
+            return;
+        }
+    		
     }
     
     /*
