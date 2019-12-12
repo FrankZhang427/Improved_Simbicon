@@ -674,6 +674,99 @@ public class Controller {
         nrGroups++;
 
     }
+    
+    /** manually add a PCA walking controller to the states...*/
+    void addPCAWalkingController(){
+    		/* - State 0 - */
+        state[nrStates] = new ConState();
+        state[nrStates].num = nrStates;
+        state[nrStates].localNum = 0;
+        state[nrStates].next = nrStates+1;
+        state[nrStates].timeFlag = true;
+        state[nrStates].leftStance = true;
+        state[nrStates].poseStance = false;
+        state[nrStates].transTime = 0.3f;
+        state[nrStates].sensorNum = 0;
+
+        state[nrStates].setThThDThDD(0, 0.007f, 0, 0, 0);
+        state[nrStates].setThThDThDD(1, 0.651f, 0, 0.2f, 3f);
+        state[nrStates].setThThDThDD(2, -1.113f, 0, 0, -4.5f);
+        state[nrStates].setThThDThDD(3, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(4, -0.026f, 0, 0, 0);
+        state[nrStates].setThThDThDD(5, 0.198f, 0, 0, 0);
+        state[nrStates].setThThDThDD(6, 0.292f, 0, 0, 0);
+       
+        nrStates ++;
+
+        /* - State 1 - */
+        state[nrStates] = new ConState();
+        state[nrStates].num = nrStates;
+        state[nrStates].localNum = 1;
+        state[nrStates].next = nrStates+1;
+        state[nrStates].timeFlag = false;
+        state[nrStates].leftStance = true;
+        state[nrStates].poseStance = false;
+        state[nrStates].transTime = 0;
+        state[nrStates].sensorNum = 0;
+
+        state[nrStates].setThThDThDD(0, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(1, -0.7f, 2.2f, 0, 0f);
+        state[nrStates].setThThDThDD(2, -0.05f, 0, 0, 0f);
+        state[nrStates].setThThDThDD(3, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(4, -0.1f, 0, 0, 0);
+        state[nrStates].setThThDThDD(5, 0.2f, 0, 0, 0);
+        state[nrStates].setThThDThDD(6, 0.2f, 0, 0, 0);
+        nrStates ++;
+
+        
+        /* - State 2 - */
+        state[nrStates] = new ConState();
+        state[nrStates].num = nrStates;
+        state[nrStates].localNum = 2;
+        state[nrStates].next = nrStates+1;
+        state[nrStates].timeFlag = true;
+        state[nrStates].leftStance = false;
+        state[nrStates].poseStance = false;
+        state[nrStates].transTime = 0.3f;
+        state[nrStates].sensorNum = 0;
+
+        state[nrStates].setThThDThDD(0, 0.007f, 0, 0, 0);
+        state[nrStates].setThThDThDD(1, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(2, -0.026f, 0, 0, 0);
+        state[nrStates].setThThDThDD(3, 0.651f, 0, 0.2f, 3f);
+        state[nrStates].setThThDThDD(4, -1.113f, 0, 0, -4.5f);
+        state[nrStates].setThThDThDD(5, 0.292f, 0, 0, 0);
+        state[nrStates].setThThDThDD(6, 0.198f, 0, 0, 0);
+        nrStates ++;
+        
+
+        /* - State 3 - */
+        state[nrStates] = new ConState();
+        state[nrStates].num = nrStates;
+        state[nrStates].localNum = 1;
+        state[nrStates].next = nrStates-3;
+        state[nrStates].timeFlag = false;
+        state[nrStates].leftStance = false;
+        state[nrStates].poseStance = false;
+        state[nrStates].transTime = 0;
+        state[nrStates].sensorNum = 6;
+
+        state[nrStates].setThThDThDD(0, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(1, 0, 0, 0, 0);
+        state[nrStates].setThThDThDD(2, -0.1f, 0, 0, 0);
+        state[nrStates].setThThDThDD(3, -0.7f, 2.2f, 0, 0f);
+        state[nrStates].setThThDThDD(4, -0.05f, 0, 0, 0f);
+        state[nrStates].setThThDThDD(5, 0.2f, 0, 0, 0);
+        state[nrStates].setThThDThDD(6, 0.2f, 0, 0, 0);
+        nrStates ++;        
+        
+        groups[nrGroups] = new Group();
+        groups[nrGroups].num = 0;
+        groups[nrGroups].stateOffset = nrStates-4;
+        groups[nrGroups].nStates = 4;
+        
+        nrGroups++;
+    }
 }
 
 

@@ -19,6 +19,8 @@ import java.awt.DefaultKeyboardFocusManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
@@ -118,13 +120,13 @@ public class Simbicon extends java.applet.Applet
         
         initComponents();
         con = new Controller();
-        con.addWalkingController();
+        con.addRobustWalkingController();
         con.addRunningController();
         con.addCrouchWalkController();
         con.addHighStepController();
         con.addGeneralWalkingController();
-        con.addRobustWalkingController();
-        
+        con.addWalkingController();
+        con.addPCAWalkingController();
         this.addKeyListener(this);
         this.requestFocus();
 
@@ -486,10 +488,15 @@ public class Simbicon extends java.applet.Applet
      */
     public void drawPCA(PCA pca) {
     		for (int i = 0; i < pca.evec.length; i++) {
+    			float[] stateCopy = new float[dim];
     			float[] state = {0.463f, 0.98f, 0.898f, -0.229f, 0.051f, 0.276f, -0.221f, -1.430f, -0.217f, 0.086f, 0.298f, -3.268f, -0.601f, 3.167f, 0.360f, 0.697f, 0.241f, 3.532f};
     			for (int j = 0; j < dim; j++) {
+    				stateCopy[j] =  pca.mean[j] +(float)pca.evec[i].evec[j];
     				state[4 + j * 2] = pca.mean[j] +(float)pca.evec[i].evec[j];
+    				//state[4 + j * 2] = pca.mean[j] +(float)(pca.evec[i].evec[j] * pca.D.get(j, j));
     			}
+    			System.out.print("Target angles for eigenvalue " + i + " : ");
+    			System.out.println(Arrays.toString(stateCopy));
         		pcaBip7.setState(state);
         		Graphics g2 = pcaBuffer.createGraphics();
         		g2.setColor(new Color(255, 255, 255));
@@ -547,7 +554,7 @@ public class Simbicon extends java.applet.Applet
         }
 
         if (e.getKeyChar() == 'w' || e.getKeyChar() == 'W'){
-            con.desiredGroupNumber = 0;
+            con.desiredGroupNumber = 5;
         }
         
         if (e.getKeyChar() == 'c' || e.getKeyChar() == 'C'){
@@ -563,7 +570,11 @@ public class Simbicon extends java.applet.Applet
         }
         
         if (e.getKeyChar() == 'n' || e.getKeyChar() == 'N'){
-            con.desiredGroupNumber = 5;
+            con.desiredGroupNumber = 0;
+        }
+        
+        if (e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
+            con.desiredGroupNumber = 6;
         }
         
         if (e.getKeyChar() == '1'){

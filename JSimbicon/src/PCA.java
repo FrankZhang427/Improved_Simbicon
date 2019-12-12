@@ -73,6 +73,7 @@ public class PCA {
 		V = V.transpose(); // easier to extract eigenvectors from columns
 		D = evd.getD();
 		double real[] = evd.getRealEigenvalues();
+		System.out.println("Real eigenvalues are :");
 		System.out.println(Arrays.toString(real));
 		double evec_array[][] = V.getArray();
 		evec = new Eigenvector[real.length];
